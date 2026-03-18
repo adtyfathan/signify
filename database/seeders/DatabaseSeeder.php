@@ -15,11 +15,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Seed core data (levels, signs, badges)
+        $this->call([
+            LevelSeeder::class,
+            SignSeeder::class,
+            BadgeSeeder::class,
+            QuizSeeder::class,
+        ]);
 
+        // Create test user
         User::factory()->create([
             'name' => 'Test User',
+            'username' => 'testuser',
             'email' => 'test@example.com',
+            'role' => 'learner',
+        ]);
+
+        // Unlock lessons untuk user yang baru dibuat
+        $this->call([
+            UserLessonProgressSeeder::class,
         ]);
     }
 }
