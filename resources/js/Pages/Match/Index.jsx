@@ -1,12 +1,12 @@
 import { Head, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import AppLayout from '@/Layouts/AppLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { AnimatedCard, AnimatedContainer } from '@/components/ui/animated';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/Components/ui/card';
+import { Button } from '@/Components/ui/button';
+import { Badge } from '@/Components/ui/badge';
+import { Progress } from '@/Components/ui/progress';
+import { Avatar, AvatarFallback, AvatarImage } from '@/Components/ui/avatar';
+import { AnimatedCard, AnimatedContainer } from '@/Components/ui/animated';
 import { Users, Radio, Clock, Zap, MapPin, Flame, LoaderCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 

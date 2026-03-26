@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Components/ui/button';
 import {
     Video, BookOpen, CheckCircle2, Loader,
     ChevronRight, ChevronLeft, Star, Images, Lightbulb,

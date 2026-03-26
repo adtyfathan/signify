@@ -2,11 +2,11 @@ import { Link, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { usePythonPredict } from '@/hooks/ai/usePythonPredict';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/Components/ui/button';
 import { CheckCircle2, Play, Square, AlertCircle, Loader, ChevronLeft, Zap } from 'lucide-react';
 import Webcam from 'react-webcam';
 
-const PYTHON_API_URL = 'http://127.0.0.1:8001';
+const PYTHON_API_URL = '/ai';
 const INFERENCE_MS = 300;
 const DEBOUNCE_MS = 500;
 

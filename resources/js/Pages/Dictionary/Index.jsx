@@ -1,10 +1,10 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import AppLayout from '@/Layouts/AppLayout';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { AnimatedContainer } from '@/components/ui/animated';
+import { Card, CardContent } from '@/Components/ui/card';
+import { Input } from '@/Components/ui/input';
+import { Button } from '@/Components/ui/button';
+import { AnimatedContainer } from '@/Components/ui/animated';
 import { Search, BookOpen, Zap } from 'lucide-react';
 import { useState, useMemo } from 'react';
 

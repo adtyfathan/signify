@@ -9,7 +9,7 @@ import {
   Loader, AlertCircle, Trash2, BookOpen, Clock
 } from 'lucide-react';
 
-const PYTHON_API_URL = 'http://127.0.0.1:8001';
+const PYTHON_API_URL = '/ai';
 const INFERENCE_MS = 350;
 const DEBOUNCE_MS = 700;       // jeda antar huruf agar tidak double-detect
 const CONFIDENCE_THRESHOLD = 75; // threshold untuk free practice (lebih ketat dari quiz)

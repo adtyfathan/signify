@@ -10,7 +10,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
  * - Tidak flip horizontal (sesuai data training)
  */
 export const usePythonPredict = (
-  pythonApiUrl = 'http://127.0.0.1:8001',
+  pythonApiUrl = '/ai',
   timeout = 5000,
 ) => {
   const [isLoading, setIsLoading] = useState(false);

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from '@inertiajs/react';
 import { Sun, Moon } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from '@/Contexts/ThemeContext';
 
 export default function AuthLayout({ children, title, subtitle, showRegisterLink, registerLink, loginLink }) {
   const { theme, toggleTheme } = useTheme();
