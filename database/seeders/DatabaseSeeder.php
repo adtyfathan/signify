@@ -21,19 +21,7 @@ class DatabaseSeeder extends Seeder
             SignSeeder::class,
             BadgeSeeder::class,
             QuizSeeder::class,
-        ]);
-
-        // Create test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'username' => 'testuser',
-            'email' => 'test@example.com',
-            'role' => 'learner',
-        ]);
-
-        // Unlock lessons untuk user yang baru dibuat
-        $this->call([
-            UserLessonProgressSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

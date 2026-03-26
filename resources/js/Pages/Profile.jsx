@@ -437,7 +437,7 @@ export default function UserProfile() {
                         <div className="grid grid-cols-3 gap-3 mb-4">
                           {recentBadges.map(badge => (
                             <div key={badge.id} className="flex flex-col items-center bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 text-center">
-                              <span className="text-3xl mb-1">{badge.icon_path || '🏆'}</span>
+                              <span className="text-3xl mb-1">🏆</span>
                               <p className="text-xs font-semibold text-slate-900 dark:text-white leading-tight truncate w-full text-center">{badge.name}</p>
                               <p className="text-[10px] text-slate-400 mt-0.5">
                                 {new Date(badge.pivot?.earned_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}

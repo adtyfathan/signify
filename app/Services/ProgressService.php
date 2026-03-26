@@ -6,18 +6,12 @@ use App\Models\Lesson;
 use App\Models\Module;
 use App\Models\User;
 use App\Models\UserLessonProgress;
+use Illuminate\Support\Facades\Log;
 
 class ProgressService
 {
-    /**
-     * Initialize progress for user on first access
-     *
-     * @param User $user
-     * @return void
-     */
     public function initializeProgress(User $user): void
     {
-        // First lesson in first module should be unlocked
         $firstModule = Module::orderBy('order_index')->first();
         if ($firstModule) {
             $firstLesson = $firstModule->lessons()->orderBy('order_index')->first();
@@ -27,13 +21,6 @@ class ProgressService
         }
     }
 
-    /**
-     * Unlock a lesson for user
-     *
-     * @param User $user
-     * @param Lesson $lesson
-     * @return void
-     */
     public function unlockLesson(User $user, Lesson $lesson): void
     {
         $progress = UserLessonProgress::firstOrCreate(
@@ -46,22 +33,18 @@ class ProgressService
             ]
         );
 
+        // Hanya update jika masih locked
         if ($progress->status === 'locked') {
             $progress->status = 'unlocked';
             $progress->save();
         }
     }
 
-    /**
-     * Mark lesson as completed and unlock next lesson
-     *
-     * @param User $user
-     * @param Lesson $lesson
-     * @param float $score
-     * @return void
-     */
     public function completeLesson(User $user, Lesson $lesson, float $score = 100.0): void
     {
+        // Pastikan relasi module & level ter-load
+        $lesson->loadMissing('module.level');
+
         $progress = UserLessonProgress::firstOrCreate(
             [
                 'user_id' => $user->id,
@@ -82,7 +65,7 @@ class ProgressService
             // Update user stats
             $user->stats()->increment('total_lessons_done');
 
-            // Unlock next lesson
+            // Cari lesson berikutnya di modul yang sama
             $nextLesson = $lesson->module->lessons()
                 ->where('order_index', '>', $lesson->order_index)
                 ->orderBy('order_index')
@@ -90,30 +73,54 @@ class ProgressService
 
             if ($nextLesson) {
                 $this->unlockLesson($user, $nextLesson);
+                Log::info("Unlocked next lesson [{$nextLesson->id}] in same module for user [{$user->id}]");
             } else {
-                // No next lesson in this module, unlock first lesson of next module
-                $nextModule = Module::where('order_index', '>', $lesson->module->order_index)
-                    ->where('level_id', $lesson->module->level_id)
+                // Lesson terakhir di modul ini — cari modul berikutnya
+                $currentModule = $lesson->module;
+
+                $nextModule = Module::where('level_id', $currentModule->level_id)
+                    ->where('order_index', '>', $currentModule->order_index)
                     ->orderBy('order_index')
                     ->first();
 
                 if ($nextModule) {
-                    $firstLessonNextModule = $nextModule->lessons()->orderBy('order_index')->first();
+                    $firstLessonNextModule = $nextModule->lessons()
+                        ->orderBy('order_index')
+                        ->first();
+
                     if ($firstLessonNextModule) {
                         $this->unlockLesson($user, $firstLessonNextModule);
+                        Log::info("Unlocked first lesson [{$firstLessonNextModule->id}] of next module [{$nextModule->id}] for user [{$user->id}]");
+                    }
+                } else {
+                    // Tidak ada modul berikutnya di level ini — coba level berikutnya
+                    $currentLevel = $currentModule->level;
+
+                    $nextLevel = \App\Models\Level::where('order_index', '>', $currentLevel->order_index)
+                        ->orderBy('order_index')
+                        ->first();
+
+                    if ($nextLevel) {
+                        $firstModuleNextLevel = Module::where('level_id', $nextLevel->id)
+                            ->orderBy('order_index')
+                            ->first();
+
+                        if ($firstModuleNextLevel) {
+                            $firstLesson = $firstModuleNextLevel->lessons()
+                                ->orderBy('order_index')
+                                ->first();
+
+                            if ($firstLesson) {
+                                $this->unlockLesson($user, $firstLesson);
+                                Log::info("Unlocked first lesson of next level [{$nextLevel->id}] for user [{$user->id}]");
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    /**
-     * Check if lesson is unlocked for user
-     *
-     * @param User $user
-     * @param Lesson $lesson
-     * @return bool
-     */
     public function isLessonUnlocked(User $user, Lesson $lesson): bool
     {
         $progress = UserLessonProgress::where('user_id', $user->id)
@@ -127,13 +134,6 @@ class ProgressService
         return in_array($progress->status, ['unlocked', 'in_progress', 'completed']);
     }
 
-    /**
-     * Get user progress for a module (percentage complete)
-     *
-     * @param User $user
-     * @param Module $module
-     * @return float Percentage 0-100
-     */
     public function getModuleProgress(User $user, Module $module): float
     {
         $totalLessons = $module->lessons()->count();
@@ -149,22 +149,18 @@ class ProgressService
         return ($completedLessons / $totalLessons) * 100;
     }
 
-    /**
-     * Get user progress for a level
-     *
-     * @param User $user
-     * @param $level
-     * @return float Percentage 0-100
-     */
     public function getLevelProgress(User $user, $level): float
     {
-        $totalLessons = Lesson::whereIn('module_id', $level->modules()->pluck('id'))->count();
+        $moduleIds = $level->modules()->pluck('id');
+        $totalLessons = Lesson::whereIn('module_id', $moduleIds)->count();
+
         if ($totalLessons === 0) {
             return 0;
         }
 
+        $lessonIds = Lesson::whereIn('module_id', $moduleIds)->pluck('id');
         $completedLessons = UserLessonProgress::where('user_id', $user->id)
-            ->whereIn('lesson_id', Lesson::whereIn('module_id', $level->modules()->pluck('id'))->pluck('id'))
+            ->whereIn('lesson_id', $lessonIds)
             ->where('status', 'completed')
             ->count();
 

@@ -5,11 +5,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GamificationController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PracticeController;
 use App\Http\Controllers\QuizController;
-use App\Http\Controllers\SignController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -33,10 +30,6 @@ Route::middleware('guest')->group(function () {
 // Auth logout
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
-// Google OAuth (public)
-Route::get('/auth/google/redirect', [AuthController::class, 'googleRedirect'])->name('auth.google.redirect');
-Route::get('/auth/google/callback', [AuthController::class, 'googleCallback'])->name('auth.google.callback');
-
 // Protected routes - require authentication
 Route::middleware('auth')->group(function () {
     // Dashboard
@@ -57,12 +50,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/lessons/{lesson}', [LessonController::class, 'show'])->name('lessons.show');
     Route::post('/lessons/{lesson}/complete', [LessonController::class, 'complete'])->name('lessons.complete');
 
-    // Signs Dictionary
-    // Route::get('/signs', [SignController::class, 'index'])->name('signs.index');
-    // Route::get('/signs/{letter}', [SignController::class, 'show'])->name('signs.show');
-    // Route::get('/dictionary', [SignController::class, 'index'])->name('dictionary.index');
-    // Route::get('/dictionary/{id}', [SignController::class, 'show'])->name('dictionary.show');
-
     // Quiz
     Route::post('/quiz/submit', [QuizController::class, 'submit'])->name('quiz.submit');
 
@@ -70,21 +57,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/practice', [PracticeController::class, 'index'])->name('practice.index');
     Route::post('/practice/save', [PracticeController::class, 'save'])->name('practice.save');
 
-    // Notifications
-    // Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    // Route::put('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-    // Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
-    // Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count');
-
     // Gamification - Leaderboard & Badges
     Route::get('/leaderboard', [GamificationController::class, 'leaderboard'])->name('leaderboard');
     Route::get('/badges', [GamificationController::class, 'showBadges'])->name('badges.index');
     Route::get('/badges/user', [GamificationController::class, 'showUserBadges'])->name('badges.user');
     Route::get('/gamification/xp-history', [GamificationController::class, 'getXpHistory'])->name('xp-history');
     Route::put('/badges/{badge}/feature', [GamificationController::class, 'featureBadge'])->name('badges.feature');
-
-    // Match - Live Practice
-    Route::get('/match', function () { 
-        return Inertia::render('Match/Index'); 
-    })->name('match.index');
 });

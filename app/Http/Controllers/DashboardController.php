@@ -33,12 +33,37 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Get sign mastery grid (A-Z)
-        $signMastery = $user->signMastery()
-            ->with('sign')
-            ->get()
-            ->keyBy(fn ($m) => $m->sign->letter)
-            ->toArray();
+        // Total badge yang dimiliki user (untuk stat card)
+        $totalBadges = $user->badges()->count();
+
+        // ── Sign Mastery: huruf dianggap mastered jika quiz_letter-nya completed ──
+        $completedQuizLetterLessons = \App\Models\Lesson::where('lesson_type', 'quiz_letter')
+            ->whereHas(
+                'userProgress',
+                fn($q) => $q
+                    ->where('user_id', $user->id)
+                    ->where('status', 'completed')
+            )
+            ->with(['quizItems' => fn($q) => $q->where('category', 'letter')->limit(1)])
+            ->get();
+
+        // Bentuk map: ['A' => ['mastery_level' => 'mastered'], 'B' => [...], ...]
+        $signMastery = [];
+        foreach ($completedQuizLetterLessons as $lesson) {
+            $quizItem = $lesson->quizItems->first();
+            if ($quizItem && strlen($quizItem->content) === 1) {
+                $letter = strtoupper($quizItem->content);
+                $signMastery[$letter] = [
+                    'mastery_level' => 'mastered',
+                ];
+            }
+        }
+
+        // Hitung ulang letters_mastered di stats agar konsisten
+        $lettersMastered = count($signMastery);
+        if ($user->stats && $user->stats->letters_mastered !== $lettersMastered) {
+            $user->stats->update(['letters_mastered' => $lettersMastered]);
+        }
 
         // Get current progress on each level
         $progressService = new ProgressService();
@@ -56,6 +81,7 @@ class DashboardController extends Controller
             'stats' => $user->stats,
             'recentQuizzes' => $recentQuizzes,
             'recentBadges' => $recentBadges,
+            'totalBadges' => $totalBadges,
             'signMastery' => $signMastery,
             'levelProgresses' => $levelProgresses,
         ]);

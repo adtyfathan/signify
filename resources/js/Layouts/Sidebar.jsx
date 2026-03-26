@@ -37,12 +37,6 @@ const menuItems = [
     href: '/badges',
     id: 'badges',
   },
-  {
-    icon: Users,
-    label: 'Match',
-    href: '/match',
-    id: 'match',
-  },
 ];
 
 export default function Sidebar({ open, onClose }) {

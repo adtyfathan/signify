@@ -179,7 +179,7 @@ function QuickAction({ href, icon: Icon, label, sub, color, delay = 0 }) {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
 export default function Dashboard() {
-  const { user, stats, recentQuizzes, recentBadges, signMastery, levelProgresses } = usePage().props;
+  const { user, stats, recentQuizzes, recentBadges, totalBadges, signMastery, levelProgresses } = usePage().props;
   const userStats = stats ?? {};
   const name = user?.name ?? 'Pengguna';
 
@@ -207,7 +207,7 @@ export default function Dashboard() {
             </h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">
               {userStats.current_streak > 0
-                ? `Streak ${userStats.current_streak} hari 🔥 — terus pertahankan!`
+                ? `Streak ${userStats.current_streak} hari 🔥, terus pertahankan!`
                 : 'Mulai belajar hari ini untuk membangun streak!'
               }
             </p>
@@ -234,7 +234,7 @@ export default function Dashboard() {
             />
             <StatCard
               label="Badge" icon={Trophy} accent="purple" delay={0.15}
-              value={recentBadges?.length ?? 0}
+              value={totalBadges ?? 0}
               sub="diperoleh"
             />
             <StatCard
@@ -365,7 +365,7 @@ export default function Dashboard() {
               <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-1.5">
                 <Trophy className="w-4 h-4 text-yellow-500" /> Badge Terbaru
               </h3>
-              <Link href="/badges/user" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              <Link href="/badges" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
                 Semua
               </Link>
             </div>
@@ -380,7 +380,7 @@ export default function Dashboard() {
                     transition={{ delay: 0.35 + i * 0.06 }}
                     className="flex items-center gap-3 py-2 border-b border-slate-100 dark:border-slate-800 last:border-0"
                   >
-                    <span className="text-2xl shrink-0">{badge.icon_path || '🏆'}</span>
+                    <span className="text-2xl shrink-0">🏆</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{badge.name}</p>
                       <p className="text-[11px] text-slate-400">

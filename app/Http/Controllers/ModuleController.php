@@ -22,7 +22,7 @@ class ModuleController extends Controller
         foreach ($levels as $level) {
             foreach ($level->modules as $module) {
                 $firstLesson = $module->lessons()->orderBy('order_index')->first();
-                $isLocked = !$firstLesson || !$progressService->isLessonUnlocked($user, $firstLesson);
+                $isLocked = $firstLesson && !$progressService->isLessonUnlocked($user, $firstLesson);
 
                 $modulesData[] = [
                     'id' => $module->id,

@@ -12,12 +12,40 @@ const DIFFICULTY_CONFIG = {
     hard: { label: '⭐⭐⭐ Sulit', className: 'bg-red-200 text-red-800' },
 };
 
+function getYouTubeEmbedUrl(url) {
+    try {
+        const parsed = new URL(url);
+        // Format: https://www.youtube.com/watch?v=VIDEO_ID
+        if (parsed.hostname.includes('youtube.com') && parsed.searchParams.get('v')) {
+            return `https://www.youtube.com/embed/${parsed.searchParams.get('v')}`;
+        }
+        // Format: https://youtu.be/VIDEO_ID
+        if (parsed.hostname === 'youtu.be') {
+            return `https://www.youtube.com/embed${parsed.pathname}`;
+        }
+        // Sudah dalam format embed: https://www.youtube.com/embed/VIDEO_ID
+        if (parsed.hostname.includes('youtube.com') && parsed.pathname.startsWith('/embed/')) {
+            return url;
+        }
+    } catch {
+        // Bukan URL valid, abaikan
+    }
+    return null;
+}
+
+function isYouTubeUrl(url) {
+    return !!getYouTubeEmbedUrl(url);
+}
+
 export default function TheoryLesson({ lesson, onComplete }) {
     const [isCompleting, setIsCompleting] = useState(false);
     const { sign, images = [], video_path: lessonVideoPath } = lesson;
 
     const hasLessonImages = images.length > 0;
     const videoSrc = lessonVideoPath ?? sign?.video_path ?? null;
+
+    const youtubeEmbedUrl = videoSrc ? getYouTubeEmbedUrl(videoSrc) : null;
+    const isYoutube = !!youtubeEmbedUrl;
 
     const handleComplete = () => {
         setIsCompleting(true);
@@ -91,9 +119,19 @@ export default function TheoryLesson({ lesson, onComplete }) {
                         </CardHeader>
                         <CardContent>
                             <div className="aspect-video bg-slate-900 rounded-lg overflow-hidden">
-                                <video src={`/${videoSrc}`} controls className="w-full h-full">
-                                    Browser Anda tidak mendukung video.
-                                </video>
+                                {isYoutube ? (
+                                    <iframe
+                                        src={youtubeEmbedUrl}
+                                        title="Video Pembelajaran"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen
+                                        className="w-full h-full"
+                                    />
+                                ) : (
+                                    <video src={`/${videoSrc}`} controls className="w-full h-full">
+                                        Browser Anda tidak mendukung video.
+                                    </video>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
