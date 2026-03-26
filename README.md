@@ -1,59 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# SIGNIFY
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Institusi
+Universitas Jenderal Soedirman
 
-## About Laravel
+## Anggota Tim
+- Ketua: Aditya Fathan Naufaldi
+- Anggota 1: Feidinata Artandi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Demo Aplikasi
+https://github.com/user-attachments/assets/473d8f0f-f069-4bea-84bc-33c3da476081
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Deskripsi Karya
+Signify adalah website edukasi bahasa isyarat yang dirancang untuk memudahkan masyarakat dalam mempelajari dan mempraktikkan bahasa isyarat secara mandiri dan menyenangkan. Website ini hadir sebagai solusi inklusif yang menjembatani komunikasi antara penyandang tunarungu dengan masyarakat umum.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Signify menyediakan berbagai fitur unggulan, antara lain:
+- **Modul Belajar** — Materi pembelajaran bahasa isyarat yang terstruktur, mencakup teori dan sesi praktik interaktif menggunakan deteksi gerakan tangan secara real-time.
+- **Latihan Bebas** — Fitur latihan mandiri di mana pengguna dapat memperagakan bahasa isyarat secara bebas dan mendapatkan umpan balik langsung.
+- **Peringkat Poin** — Sistem leaderboard yang menampilkan peringkat pengguna berdasarkan poin yang dikumpulkan, mendorong semangat belajar secara kompetitif.
+- **Badges Pencapaian** — Penghargaan digital yang diberikan kepada pengguna atas pencapaian tertentu dalam perjalanan belajar mereka.
+- **Autentikasi** — Sistem registrasi dan login yang aman untuk melindungi data pengguna.
+- **Profil Pengguna** — Halaman profil yang menampilkan statistik belajar, poin, dan badges yang telah diraih.
 
-## Learning Laravel
+Subtema yang diangkat adalah **Pendidikan Inklusif dan Teknologi Aksesibilitas**, dengan tujuan menciptakan ekosistem belajar yang ramah bagi semua kalangan, khususnya para penyandang disabilitas sensorik.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Link Website
+http://202.10.34.110
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Langkah Instalasi
 
-## Laravel Sponsors
+### Prasyarat
+- PHP >= 8.2
+- Composer
+- Node.js & NPM
+- Python >= 3.10
+- Git
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+### 1. Instalasi Aplikasi Laravel (Backend & Frontend)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+# 1. Clone repositori
+git clone https://github.com/username/signify.git
+cd signify
 
-## Contributing
+# 2. Install dependensi PHP
+composer install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 3. Install dependensi Node.js
+npm install
 
-## Code of Conduct
+# 4. Salin file environment dan generate key
+cp .env.example .env
+php artisan key:generate
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 5. Konfigurasi database pada file .env, lalu jalankan migrasi
+php artisan migrate --seed
 
-## Security Vulnerabilities
+# 6. Build aset frontend
+npm run build
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 7. Jalankan server Laravel
+php artisan serve
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 2. Instalasi Layanan Python (Model Deteksi Bahasa Isyarat)
+
+```bash
+# 1. Masuk ke direktori python
+cd python
+
+# 2. Buat virtual environment
+python -m venv venv
+
+# 3. Aktifkan virtual environment
+source venv/bin/activate
+# Windows: venv\Scripts\activate
+
+# 4. Install dependensi Python
+pip install -r requirements.txt
+
+# 5. Jalankan server FastAPI
+uvicorn main:app --host 127.0.0.1 --port 8001
+```
+
+> Pastikan layanan Python berjalan sebelum menggunakan fitur deteksi bahasa isyarat pada website.
