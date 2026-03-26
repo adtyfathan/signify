@@ -26,6 +26,10 @@ Subtema yang diangkat adalah **Pendidikan Inklusif dan Teknologi Aksesibilitas**
 ## Link Website
 http://202.10.34.110
 
+## Akun Untuk Demo
+email : superuser@gmail.com
+password : user1234
+
 ## Langkah Instalasi
 
 ### Prasyarat
