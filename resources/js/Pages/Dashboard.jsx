@@ -2,8 +2,8 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import AppLayout from '@/Layouts/AppLayout';
 import {
-  Flame, Zap, Trophy, BookOpen, TrendingUp,
-  ArrowRight, Play, Lightbulb, BarChart3, Target,
+  Flame, Zap, Trophy, BookOpen,
+  Lightbulb, BarChart3, Target,
   CheckCircle2, Clock, ChevronRight
 } from 'lucide-react';
 
@@ -31,14 +31,15 @@ function StatCard({ label, value, sub, icon: Icon, accent, delay = 0 }) {
     yellow: 'text-yellow-500 bg-yellow-500/10',
     red: 'text-red-500 bg-red-500/10',
     purple: 'text-purple-500 bg-purple-500/10',
-    green: 'text-green-500 bg-green-500/10',
+    green: 'text-[#6fb89d] bg-[#6fb89d]/10',
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
-      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col gap-3"
+      className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5 flex flex-col gap-3"
     >
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{label}</span>
@@ -68,7 +69,7 @@ function XpBar({ stats }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
-      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5"
+      className="bg-[#f8f3e1] dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5"
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -79,16 +80,20 @@ function XpBar({ stats }) {
         </div>
         <span className="text-xs text-slate-400">{remainder} / {xpToNext} XP</span>
       </div>
-      <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+      <div className="h-2.5 bg-[#6fb89d]/15 dark:bg-slate-800 rounded-full overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"
+          className="h-full bg-gradient-to-r from-[#6fb89d] to-[#f8d95e] rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.9, ease: 'easeOut', delay: 0.3 }}
         />
       </div>
       <p className="text-xs text-slate-400 mt-2">
-        Butuh <span className="font-semibold text-yellow-600 dark:text-yellow-400">{xpToNext - remainder} XP</span> lagi untuk naik level
+        Butuh{' '}
+        <span className="font-semibold text-[#6fb89d]">
+          {xpToNext - remainder} XP
+        </span>{' '}
+        lagi untuk naik level
       </p>
     </motion.div>
   );
@@ -99,9 +104,9 @@ function XpBar({ stats }) {
 function MasteryGrid({ signMastery }) {
   const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const levelColor = {
-    mastered: 'bg-green-500 text-white border-green-500',
-    practiced: 'bg-blue-400 text-white border-blue-400',
-    learning: 'bg-yellow-400 text-white border-yellow-400',
+    mastered: 'bg-[#6fb89d] text-white border-[#6fb89d]',
+    practiced: 'bg-[#f8d95e] text-slate-700 border-[#f8d95e]',
+    learning: 'bg-[#f8f3e1] text-[#6fb89d] border-[#6fb89d]/40',
   };
 
   return (
@@ -109,14 +114,20 @@ function MasteryGrid({ signMastery }) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
-      className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5"
+      className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5"
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Penguasaan Huruf</h3>
         <div className="flex items-center gap-3 text-[10px] text-slate-400">
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> Mahir</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-blue-400 inline-block" /> Latihan</span>
-          <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" /> Belajar</span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-[#6fb89d] inline-block" /> Mahir
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-[#f8d95e] inline-block" /> Latihan
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-[#f8f3e1] border border-[#6fb89d]/40 inline-block" /> Belajar
+          </span>
         </div>
       </div>
       <div className="grid grid-cols-9 gap-1.5">
@@ -131,7 +142,7 @@ function MasteryGrid({ signMastery }) {
               transition={{ delay: 0.35 + i * 0.015 }}
               title={level ? `${letter}: ${level}` : `${letter}: belum dipelajari`}
               className={`aspect-square rounded-lg border flex items-center justify-center text-xs font-bold transition-all cursor-default
-                                ${level
+                ${level
                   ? levelColor[level]
                   : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 border-slate-200 dark:border-slate-700'
                 }`}
@@ -149,10 +160,11 @@ function MasteryGrid({ signMastery }) {
 
 function QuickAction({ href, icon: Icon, label, sub, color, delay = 0 }) {
   const colors = {
-    blue: 'bg-blue-50 dark:bg-blue-500/10 border-blue-200 dark:border-blue-500/20 text-blue-600 dark:text-blue-400',
-    indigo: 'bg-indigo-50 dark:bg-indigo-500/10 border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400',
-    green: 'bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20 text-green-600 dark:text-green-400',
+    green: 'bg-[#6fb89d]/10 dark:bg-[#6fb89d]/10 border-[#6fb89d]/30 dark:border-[#6fb89d]/20 text-[#6fb89d]',
+    yellow: 'bg-[#f8d95e]/20 dark:bg-[#f8d95e]/10 border-[#f8d95e]/50 dark:border-[#f8d95e]/20 text-amber-600 dark:text-[#f8d95e]',
+    cream: 'bg-[#f8f3e1] dark:bg-slate-800 border-[#6fb89d]/20 dark:border-slate-700 text-slate-600 dark:text-slate-300',
   };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: -8 }}
@@ -176,6 +188,23 @@ function QuickAction({ href, icon: Icon, label, sub, color, delay = 0 }) {
   );
 }
 
+// ─── Score Badge — fixed size, teks tidak overflow ────────────────────────────
+
+function ScoreBadge({ score }) {
+  let cls = '';
+  if (score >= 80) cls = 'bg-[#6fb89d]/15 text-[#6fb89d]';
+  else if (score >= 60) cls = 'bg-[#f8d95e]/30 text-amber-700 dark:text-amber-400';
+  else cls = 'bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400';
+
+  return (
+    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden ${cls}`}>
+      <span className="text-[8px] font-bold leading-none whitespace-nowrap">
+        {score}%
+      </span>
+    </div>
+  );
+}
+
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
 export default function Dashboard() {
@@ -195,9 +224,9 @@ export default function Dashboard() {
       >
         <div className="flex items-center gap-3">
           {/* Avatar */}
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-[#6fb89d] flex items-center justify-center text-white font-bold text-sm shrink-0 overflow-hidden">
             {user?.avatar_path
-              ? <img src={user.avatar_path} className="w-full h-full object-cover rounded-xl" alt="avatar" />
+              ? <img src={user.avatar_path} className="w-full h-full object-cover" alt="avatar" />
               : getInitials(name)
             }
           </div>
@@ -256,7 +285,7 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5"
+              className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5"
             >
               <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-4">Progress per Level</h3>
               <div className="space-y-4">
@@ -264,11 +293,11 @@ export default function Dashboard() {
                   <div key={level.level_id}>
                     <div className="flex justify-between mb-1.5">
                       <span className="text-sm text-slate-600 dark:text-slate-400">{level.name}</span>
-                      <span className="text-xs font-semibold text-slate-500">{Math.round(level.progress)}%</span>
+                      <span className="text-xs font-semibold text-[#6fb89d]">{Math.round(level.progress)}%</span>
                     </div>
-                    <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                    <div className="h-2 bg-[#6fb89d]/10 dark:bg-slate-800 rounded-full overflow-hidden">
                       <motion.div
-                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+                        className="h-full bg-gradient-to-r from-[#6fb89d] to-[#f8d95e] rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${level.progress}%` }}
                         transition={{ duration: 0.7, delay: 0.4 + i * 0.1 }}
@@ -281,7 +310,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* ── Right column (sidebar) ── */}
+        {/* ── Right column ── */}
         <div className="space-y-5">
 
           {/* Quick actions */}
@@ -289,12 +318,12 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5"
+            className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5"
           >
             <h3 className="font-semibold text-slate-900 dark:text-white text-sm mb-3">Mulai Sekarang</h3>
             <div className="space-y-2">
-              <QuickAction href="/learn" icon={BookOpen} label="Lanjut Belajar" sub="Modul & pelajaran" color="blue" delay={0.15} />
-              <QuickAction href="/practice" icon={Lightbulb} label="Latihan Bebas" sub="Deteksi huruf bebas" color="indigo" delay={0.2} />
+              <QuickAction href="/learn" icon={BookOpen} label="Lanjut Belajar" sub="Modul & pelajaran" color="green" delay={0.15} />
+              <QuickAction href="/practice" icon={Lightbulb} label="Latihan Bebas" sub="Deteksi huruf bebas" color="green" delay={0.2} />
               <QuickAction href="/leaderboard" icon={BarChart3} label="Papan Peringkat" sub="Lihat posisi kamu" color="green" delay={0.25} />
             </div>
           </motion.div>
@@ -304,11 +333,11 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5"
+            className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5"
           >
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-slate-900 dark:text-white text-sm">Quiz Terakhir</h3>
-              <Link href="/learn" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              <Link href="/learn" className="text-xs text-[#6fb89d] hover:underline">
                 Semua
               </Link>
             </div>
@@ -321,28 +350,22 @@ export default function Dashboard() {
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.25 + i * 0.05 }}
-                    className="flex items-center gap-3 py-2 border-b border-slate-100 dark:border-slate-800 last:border-0"
+                    className="flex items-center gap-3 py-2 border-b border-[#6fb89d]/10 dark:border-slate-800 last:border-0"
                   >
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0
-                                            ${quiz.score >= 80
-                        ? 'bg-green-100 dark:bg-green-500/10 text-green-600 dark:text-green-400'
-                        : quiz.score >= 60
-                          ? 'bg-yellow-100 dark:bg-yellow-500/10 text-yellow-600 dark:text-yellow-400'
-                          : 'bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400'
-                      }`}
-                    >
-                      {quiz.score}%
-                    </div>
+                    <ScoreBadge score={quiz.score} />
+
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
                         {quiz.lesson?.title ?? `Quiz #${i + 1}`}
                       </p>
                       <p className="text-[11px] text-slate-400 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
+                        <Clock className="w-3 h-3 shrink-0" />
                         {formatDate(quiz.created_at)}
                       </p>
                     </div>
-                    {quiz.score >= 80 && <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />}
+                    {quiz.score >= 80 && (
+                      <CheckCircle2 className="w-4 h-4 text-[#6fb89d] shrink-0" />
+                    )}
                   </motion.div>
                 ))}
               </div>
@@ -359,13 +382,13 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5"
+            className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5"
           >
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-slate-900 dark:text-white text-sm flex items-center gap-1.5">
                 <Trophy className="w-4 h-4 text-yellow-500" /> Badge Terbaru
               </h3>
-              <Link href="/badges" className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
+              <Link href="/badges" className="text-xs text-[#6fb89d] hover:underline">
                 Semua
               </Link>
             </div>
@@ -378,7 +401,7 @@ export default function Dashboard() {
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.35 + i * 0.06 }}
-                    className="flex items-center gap-3 py-2 border-b border-slate-100 dark:border-slate-800 last:border-0"
+                    className="flex items-center gap-3 py-2 border-b border-[#6fb89d]/10 dark:border-slate-800 last:border-0"
                   >
                     <span className="text-2xl shrink-0">🏆</span>
                     <div className="flex-1 min-w-0">

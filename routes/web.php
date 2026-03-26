@@ -12,11 +12,10 @@ use Inertia\Inertia;
 
 // Landing page
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
-})->name('welcome');
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
+});
 
 // Auth routes (public)
 Route::middleware('guest')->group(function () {

@@ -23,7 +23,8 @@ function Field({ label, error, children }) {
   );
 }
 
-const inputClass = "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition";
+const inputClass =
+  "w-full px-3 py-2.5 rounded-xl border border-[#6fb89d]/30 dark:border-slate-700 bg-white dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6fb89d] focus:border-transparent transition";
 
 export default function Register() {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -51,7 +52,7 @@ export default function Register() {
     >
       <Head title="Register" />
 
-      <form onSubmit={submit} className="space-y-3.5">
+      <form onSubmit={submit} className="space-y-2.5">
 
         {/* Name */}
         <Field label="Nama Lengkap" error={errors.name}>
@@ -130,13 +131,13 @@ export default function Register() {
           <input
             type="checkbox"
             required
-            className="mt-0.5 w-4 h-4 rounded border-slate-300 accent-blue-600 shrink-0"
+            className="mt-0.5 w-4 h-4 rounded border-[#6fb89d]/40 accent-[#6fb89d] shrink-0"
           />
           <span className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
             Saya setuju dengan{' '}
-            <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Syarat & Ketentuan</a>
+            <a href="#" className="text-[#6fb89d] hover:underline font-medium">Syarat & Ketentuan</a>
             {' '}dan{' '}
-            <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">Kebijakan Privasi</a>
+            <a href="#" className="text-[#6fb89d] hover:underline font-medium">Kebijakan Privasi</a>
           </span>
         </label>
 
@@ -144,7 +145,7 @@ export default function Register() {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={processing}
-          className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm"
+          className="w-full flex items-center justify-center gap-2 bg-[#6fb89d] hover:bg-[#5da889] disabled:opacity-60 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm shadow-sm shadow-[#6fb89d]/30"
         >
           {processing
             ? <><Loader className="w-4 h-4 animate-spin" /> Membuat akun...</>

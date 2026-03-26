@@ -1,391 +1,362 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import AppLayout from '@/Layouts/AppLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { BookOpen, Lock, LockOpen, CheckCircle2, Clock, Zap, ArrowLeft, Play } from 'lucide-react';
+import {
+  BookOpen, Lock, LockOpen, CheckCircle2,
+  Clock, Zap, ArrowLeft, Play, ChevronRight
+} from 'lucide-react';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const LEVEL_META = {
+  Beginner: { emoji: '👋', label: 'Pemula', gradientClass: 'from-[#6fb89d] to-[#4a9e82]' },
+  Intermediate: { emoji: '💬', label: 'Menengah', gradientClass: 'from-amber-400 to-amber-600' },
+  Advanced: { emoji: '🎓', label: 'Mahir', gradientClass: 'from-red-400 to-rose-600' },
+};
+
+const getMeta = (level) => LEVEL_META[level] ?? {
+  emoji: '📚', label: level ?? '', gradientClass: 'from-slate-400 to-slate-600',
+};
+
+const LESSON_TYPE_LABEL = {
+  theory: { label: 'Teori', icon: '📖' },
+  quiz_letter: { label: 'Kuis Huruf', icon: '📙' },
+  quiz_word: { label: 'Kuis Kata', icon: '📙' },
+  practice: { label: 'Praktik', icon: '🤚' },
+};
+
+const getLessonTypeMeta = (type) =>
+  LESSON_TYPE_LABEL[type] ?? { label: type, icon: '📋' };
+
+// ─── Status helpers ───────────────────────────────────────────────────────────
+
+const STATUS = {
+  completed: { label: 'Selesai', badgeClass: 'bg-[#6fb89d]/15 text-[#6fb89d] border border-[#6fb89d]/30' },
+  in_progress: { label: 'Sedang Dikerjakan', badgeClass: 'bg-[#f8d95e]/20 text-amber-700 dark:text-amber-400 border border-[#f8d95e]/40' },
+  unlocked: { label: 'Siap Belajar', badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700' },
+  locked: { label: 'Terkunci', badgeClass: 'bg-slate-100 dark:bg-slate-800 text-slate-400 border border-slate-200 dark:border-slate-700' },
+};
+
+const getStatus = (s) => STATUS[s] ?? STATUS.locked;
+
+// ─── Progress Bar ─────────────────────────────────────────────────────────────
+
+function ProgressBar({ value, delay = 0 }) {
+  return (
+    <div className="h-2 bg-[#6fb89d]/10 dark:bg-slate-800 rounded-full overflow-hidden">
+      <motion.div
+        className="h-full bg-gradient-to-r from-[#6fb89d] to-[#f8d95e] rounded-full"
+        initial={{ width: 0 }}
+        animate={{ width: `${Math.min(100, value ?? 0)}%` }}
+        transition={{ duration: 0.9, ease: 'easeOut', delay }}
+      />
+    </div>
+  );
+}
+
+// ─── Stat Card ────────────────────────────────────────────────────────────────
+
+function StatCard({ icon: Icon, iconClass, label, value, delay }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.4 }}
+      className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5 flex items-center gap-4"
+    >
+      <div className="w-10 h-10 rounded-xl bg-[#f8f3e1] dark:bg-[#6fb89d]/10 flex items-center justify-center shrink-0">
+        <Icon className={`w-5 h-5 ${iconClass}`} />
+      </div>
+      <div>
+        <p className="text-xs text-slate-400 font-medium">{label}</p>
+        <p className="text-2xl font-bold text-slate-900 dark:text-white leading-tight">{value}</p>
+      </div>
+    </motion.div>
+  );
+}
+
+// ─── Lesson Row ───────────────────────────────────────────────────────────────
+
+function LessonRow({ lesson, index }) {
+  const typeMeta = getLessonTypeMeta(lesson.type);
+  const statusMeta = getStatus(lesson.status);
+  const isUnlocked = lesson.is_unlocked;
+  const isDone = lesson.status === 'completed';
+
+  const imgSrc = lesson.first_image ? `/${lesson.first_image}` : null;
+
+  const rowContent = (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: 0.15 + index * 0.06 }}
+      className={`group flex items-center gap-4 p-4 rounded-2xl border transition-all
+        ${isUnlocked
+          ? 'bg-white dark:bg-slate-900 border-[#6fb89d]/20 dark:border-[#6fb89d]/15 hover:border-[#6fb89d]/50 hover:shadow-sm cursor-pointer'
+          : 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-60 cursor-not-allowed'
+        }`}
+    >
+      {/* Thumbnail */}
+      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-[#6fb89d] flex items-center justify-center relative">
+        {imgSrc ? (
+          <img
+            src={imgSrc}
+            alt={lesson.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <span className="text-2xl select-none">{typeMeta.icon}</span>
+        )}
+
+        {/* Play overlay on hover */}
+        {isUnlocked && !isDone && (
+          <div className="absolute inset-0 bg-[#6fb89d]/0 group-hover:bg-[#6fb89d]/80 flex items-center justify-center transition-all duration-200">
+            <Play className="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+          </div>
+        )}
+
+        {/* Completed checkmark overlay */}
+        {isDone && (
+          <div className="absolute inset-0 bg-[#6fb89d]/70 flex items-center justify-center">
+            <CheckCircle2 className="w-5 h-5 text-white" />
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div className="flex-1 min-w-0">
+        <h3 className={`text-sm font-semibold leading-snug truncate
+          ${isUnlocked ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-600'}`}>
+          {lesson.title}
+        </h3>
+
+        <div className="flex flex-wrap items-center gap-2 mt-1">
+          {/* Type badge */}
+          <span className="text-[10px] font-medium text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+            {typeMeta.icon} {typeMeta.label}
+          </span>
+
+          {/* XP */}
+          {lesson.xp_reward > 0 && (
+            <span className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-0.5">
+              <Zap className="w-3 h-3" /> +{lesson.xp_reward} XP
+            </span>
+          )}
+
+          {/* Status badge */}
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${statusMeta.badgeClass}`}>
+            {statusMeta.label}
+          </span>
+
+          {/* Best score */}
+          {isDone && lesson.best_score !== null && (
+            <span className="text-[10px] font-semibold text-[#6fb89d]">
+              Skor: {lesson.best_score}%
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Right: action */}
+      <div className="shrink-0">
+        {isUnlocked ? (
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors
+            ${isDone
+              ? 'bg-[#6fb89d]/15 text-[#6fb89d]'
+              : 'bg-[#f8f3e1] dark:bg-[#6fb89d]/10 text-[#6fb89d] group-hover:bg-[#6fb89d] group-hover:text-white'
+            }`}>
+            {isDone
+              ? <CheckCircle2 className="w-4 h-4" />
+              : <ChevronRight className="w-4 h-4" />
+            }
+          </div>
+        ) : (
+          <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+            <Lock className="w-3.5 h-3.5 text-slate-400" />
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+
+  return isUnlocked
+    ? <Link href={`/lessons/${lesson.id}`} className='block'>{rowContent}</Link>
+    : rowContent;
+}
+
+// ─── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function ModuleDetail() {
   const { module, lessons = [] } = usePage().props;
+  const meta = getMeta(module.level?.name);
 
-  // Get level icon and color
-  const getLevelIcon = (level) => {
-    const icons = {
-      'Beginner': '👋',
-      'Intermediate': '💬',
-      'Advanced': '🎓',
-    };
-    return icons[level] || '📚';
-  };
+  const completedLessons = lessons.filter(l => l.status === 'completed').length;
+  const progressPercentage = lessons.length > 0
+    ? (completedLessons / lessons.length) * 100
+    : 0;
 
-  const getLevelColor = (level) => {
-    const colors = {
-      'Beginner': 'from-blue-400 to-blue-600',
-      'Intermediate': 'from-orange-400 to-orange-600',
-      'Advanced': 'from-red-400 to-red-600',
-    };
-    return colors[level] || 'from-slate-400 to-slate-600';
-  };
-
-  const getDifficultyBadgeColor = (level) => {
-    switch (level) {
-      case 'Beginner':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
-      case 'Intermediate':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
-      case 'Advanced':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-      default:
-        return 'bg-slate-100 text-slate-800';
-    }
-  };
-
-  // Get lesson status icon and color
-  const getLessonStatusIcon = (status) => {
-    switch (status) {
-      case 'completed':
-        return <CheckCircle2 className="w-5 h-5 text-green-600" />;
-      case 'in_progress':
-        return <Clock className="w-5 h-5 text-blue-600" />;
-      case 'unlocked':
-        return <LockOpen className="w-5 h-5 text-yellow-600" />;
-      case 'locked':
-        return <Lock className="w-5 h-5 text-slate-400" />;
-      default:
-        return null;
-    }
-  };
-
-  const getLessonStatusLabel = (status) => {
-    const labels = {
-      'completed': 'Selesai',
-      'in_progress': 'Sedang Dikerjakan',
-      'unlocked': 'Siap Belajar',
-      'locked': 'Terkunci',
-    };
-    return labels[status] || status;
-  };
-
-  const getLessonStatusColor = (status) => {
-    switch (status) {
-      case 'completed':
-        return 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900';
-      case 'in_progress':
-        return 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900';
-      case 'unlocked':
-        return 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800 hover:bg-yellow-100 dark:hover:bg-yellow-900';
-      case 'locked':
-        return 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800';
-      default:
-        return 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700';
-    }
-  };
-
-  // Calculate module progress
-  const completedLessons = lessons.filter((l) => l.status === 'completed').length;
-  const unlockedLessons = lessons.filter((l) => ['unlocked', 'in_progress', 'completed'].includes(l.status)).length;
-  const progressPercentage = lessons.length > 0 ? (completedLessons / lessons.length) * 100 : 0;
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
-  };
+  // Find next lesson to continue
+  const nextLesson = lessons.find(
+    l => l.is_unlocked && l.status !== 'completed'
+  );
 
   return (
     <AppLayout>
       <Head title={module.name} />
 
-      {/* Back Button */}
+      {/* ── Back ── */}
       <motion.div
-        initial={{ opacity: 0, x: -20 }}
+        initial={{ opacity: 0, x: -16 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.3 }}
-        className="mb-6"
+        className="mb-5"
       >
-        <Link href="/modules" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium">
+        <Link
+          href="/learn"
+          className="inline-flex items-center gap-1.5 text-sm text-[#6fb89d] hover:text-[#5da88d] font-medium transition-colors"
+        >
           <ArrowLeft className="w-4 h-4" />
           Kembali ke Modul
         </Link>
       </motion.div>
 
-      {/* Module Header */}
+      {/* ── Hero Banner ── */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <Card className={`bg-gradient-to-br ${getLevelColor(module.level?.name)} overflow-hidden`}>
-          <CardContent className="p-8 relative z-10">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-4xl font-bold text-white">
-                    {module.name}
-                  </h1>
-                </div>
-                <p className="text-white/90 text-lg max-w-2xl">
-                  {module.description}
-                </p>
-              </div>
-              <div className="text-5xl ml-4">{getLevelIcon(module.level?.name)}</div>
-            </div>
+        <div className="relative rounded-2xl overflow-hidden min-h-[220px] sm:min-h-[280px]">
 
-            {/* Module Level Badge */}
-            <div className="flex items-center gap-2 mt-4">
-              <span className={`px-4 py-1 rounded-full text-sm font-semibold text-white bg-white/20 backdrop-blur-sm`}>
-                {module.level?.name}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+          {/* Background: thumbnail or gradient fallback */}
+          {module.thumbnail_path ? (
+            <img
+              src={`/${module.thumbnail_path}`}
+              alt={module.name}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${meta.gradientClass}`} />
+          )}
+
+          {/* Left-to-right dark overlay so text is readable */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/10" />
+
+          {/* Optional: subtle dot pattern over overlay */}
+          <div
+            className="absolute inset-0 opacity-5 pointer-events-none select-none"
+            style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+          />
+
+          {/* Content */}
+          <div className="relative z-10 p-7 sm:p-10 flex flex-col justify-end h-full min-h-[220px] sm:min-h-[280px]">
+            {/* Level badge */}
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 bg-white/15 backdrop-blur-sm px-3 py-1 rounded-full mb-3 w-fit">
+              {meta.emoji} {meta.label}
+            </span>
+
+            <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2 drop-shadow-md">
+              {module.name}
+            </h1>
+            <p className="text-white/75 text-sm leading-relaxed max-w-lg drop-shadow">
+              {module.description}
+            </p>
+
+            {/* CTA */}
+            {nextLesson && (
+              <Link href={`/lessons/${nextLesson.id}`} className="inline-block mt-5">
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="bg-white text-[#6fb89d] font-semibold text-sm px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-shadow flex items-center gap-2"
+                >
+                  <Play className="w-4 h-4" />
+                  {completedLessons > 0 ? 'Lanjutkan Belajar' : 'Mulai Belajar'}
+                </motion.button>
+              </Link>
+            )}
+          </div>
+        </div>
       </motion.div>
 
-      {/* Progress Section */}
+      {/* ── Stats ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <StatCard icon={BookOpen} iconClass="text-[#6fb89d]" label="Total Pelajaran" value={lessons.length} delay={0.05} />
+        <StatCard icon={CheckCircle2} iconClass="text-[#6fb89d]" label="Selesai" value={`${completedLessons}/${lessons.length}`} delay={0.1} />
+        <StatCard icon={Zap} iconClass="text-yellow-500" label="Progress" value={`${Math.round(progressPercentage)}%`} delay={0.15} />
+      </div>
+
+      {/* ── Overall Progress Bar ── */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8"
+        transition={{ delay: 0.2 }}
+        className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5 mb-8"
       >
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Total Pelajaran</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                  {lessons.length}
-                </p>
-              </div>
-              <BookOpen className="w-8 h-8 text-blue-600 opacity-20" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Selesai</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                  {completedLessons}/{lessons.length}
-                </p>
-              </div>
-              <CheckCircle2 className="w-8 h-8 text-green-600 opacity-20" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Progress</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white">
-                  {Math.round(progressPercentage)}%
-                </p>
-              </div>
-              <Zap className="w-8 h-8 text-yellow-600 opacity-20" />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex justify-between text-sm mb-2">
+          <span className="font-semibold text-slate-700 dark:text-slate-300">Progress Modul</span>
+          <span className="text-[#6fb89d] font-semibold">{completedLessons} dari {lessons.length} selesai</span>
+        </div>
+        <ProgressBar value={progressPercentage} delay={0.3} />
       </motion.div>
 
-      {/* Overall Progress Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.15 }}
-        className="mb-8"
-      >
-        <Card>
-          <CardContent className="p-6">
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="font-semibold text-slate-900 dark:text-white">
-                  Progress Modul
-                </span>
-                <span className="text-sm text-slate-600 dark:text-slate-400">
-                  {completedLessons} dari {lessons.length} selesai
-                </span>
-              </div>
-              <Progress value={progressPercentage} className="h-3" />
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Lessons List */}
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-        className="space-y-4"
-      >
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+      {/* ── Lessons List ── */}
+      <div className="mb-8">
+        <motion.h2
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+          className="text-lg font-bold text-slate-900 dark:text-white mb-4"
+        >
           Daftar Pelajaran
-        </h2>
+          <span className="ml-2 text-sm font-normal text-slate-400">({lessons.length})</span>
+        </motion.h2>
 
         {lessons.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <BookOpen className="w-12 h-12 text-slate-400 mx-auto mb-4" />
-              <p className="text-slate-600 dark:text-slate-400">
-                Belum ada pelajaran dalam modul ini.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="bg-white dark:bg-slate-900 border border-[#6fb89d]/20 rounded-2xl p-10 text-center">
+            <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-400 text-sm">Belum ada pelajaran dalam modul ini.</p>
+          </div>
         ) : (
-          lessons.map((lesson, idx) => (
-            <motion.div key={lesson.id} variants={itemVariants}>
-              <Card className={`border-2 transition-all ${getLessonStatusColor(lesson.status)}`}>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    {/* Lesson Icon */}
-                    <div className="flex-shrink-0 pt-1">
-                      {lesson.is_unlocked ? (
-                        <div className="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                          <Play className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                        </div>
-                      ) : (
-                        <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                          <Lock className="w-6 h-6 text-slate-400" />
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Lesson Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-lg font-bold text-slate-900 dark:text-white truncate">
-                          {idx + 1}. {lesson.title}
-                        </h3>
-                        {getLessonStatusIcon(lesson.status)}
-                      </div>
-
-                      <div className="flex flex-wrap gap-4 mb-3 text-sm">
-                        {/* Lesson Type */}
-                        <div className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
-                          <span>📋 {lesson.type}</span>
-                        </div>
-
-                        {/* XP Reward */}
-                        {lesson.xp_reward > 0 && (
-                          <div className="flex items-center gap-1 text-yellow-600 dark:text-yellow-400 font-semibold">
-                            <Zap className="w-4 h-4" />
-                            +{lesson.xp_reward} XP
-                          </div>
-                        )}
-
-                        {/* Status Label */}
-                        <div className="flex items-center gap-1">
-                          <span className={`px-3 py-0.5 rounded-full text-xs font-semibold
-                            ${lesson.status === 'completed' ? 'bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200' : ''}
-                            ${lesson.status === 'in_progress' ? 'bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : ''}
-                            ${lesson.status === 'unlocked' ? 'bg-yellow-200 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : ''}
-                            ${lesson.status === 'locked' ? 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-300' : ''}
-                          `}>
-                            {getLessonStatusLabel(lesson.status)}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Best Score */}
-                      {lesson.status === 'completed' && lesson.best_score !== null && (
-                        <div className="text-sm text-slate-600 dark:text-slate-400">
-                          Skor Terbaik: <span className="font-semibold text-slate-900 dark:text-white">{lesson.best_score}%</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Action Button */}
-                    {lesson.is_unlocked ? (
-                      <Link href={`/lessons/${lesson.id}`} className="flex-shrink-0">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-colors flex items-center gap-2 whitespace-nowrap"
-                        >
-                          <Play className="w-4 h-4" />
-                          Mulai
-                        </motion.button>
-                      </Link>
-                    ) : (
-                      <div className="flex-shrink-0">
-                        <button
-                          disabled
-                          className="bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 font-semibold px-4 py-2 rounded-lg cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
-                        >
-                          <Lock className="w-4 h-4" />
-                          Terkunci
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))
+          <div className="space-y-2.5">
+            {lessons.map((lesson, i) => (
+              <LessonRow key={lesson.id} lesson={lesson} index={i} />
+            ))}
+          </div>
         )}
-      </motion.div>
+      </div>
 
-      {/* Info Section */}
+      {/* ── Info Cards ── */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-        className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6"
+        transition={{ delay: 0.4 }}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4"
       >
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Bagaimana Cara Membuka Pelajaran?</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-            <p>
-              ✅ Pelajaran pertama otomatis terbuka saat Anda bergabung.
-            </p>
-            <p>
-              ✅ Pelajaran berikutnya akan terbuka setelah Anda menyelesaikan pelajaran sebelumnya dengan nilai minimum yang diperlukan.
-            </p>
-            <p>
-              ✅ Lanjutkan belajar untuk membuka seluruh kurikulum terstruktur kami!
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-[#f8f3e1] dark:bg-[#6fb89d]/5 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5">
+          <h4 className="font-semibold text-slate-800 dark:text-white text-sm mb-3 flex items-center gap-2">
+            <LockOpen className="w-4 h-4 text-[#6fb89d]" />
+            Cara Membuka Pelajaran
+          </h4>
+          <ul className="space-y-1.5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-[#6fb89d] mt-0.5 shrink-0" /> Pelajaran pertama otomatis terbuka saat bergabung.</li>
+            <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-[#6fb89d] mt-0.5 shrink-0" /> Pelajaran berikutnya terbuka setelah menyelesaikan yang sebelumnya.</li>
+            <li className="flex items-start gap-2"><CheckCircle2 className="w-3.5 h-3.5 text-[#6fb89d] mt-0.5 shrink-0" /> Terus belajar untuk membuka seluruh kurikulum!</li>
+          </ul>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Tips Belajar</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-            <p>
-              💡 Pelajari setiap pelajaran dengan seksama untuk hasil maksimal.
-            </p>
-            <p>
-              🎯 Targetkan skor tinggi untuk mendapatkan bonus XP.
-            </p>
-            <p>
-              🔥 Pertahankan semangat Anda dengan belajar secara konsisten setiap hari!
-            </p>
-          </CardContent>
-        </Card>
+        <div className="bg-[#f8f3e1] dark:bg-[#6fb89d]/5 border border-[#6fb89d]/20 dark:border-[#6fb89d]/15 rounded-2xl p-5">
+          <h4 className="font-semibold text-slate-800 dark:text-white text-sm mb-3 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-yellow-500" />
+            Tips Belajar
+          </h4>
+          <ul className="space-y-1.5 text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            <li className="flex items-start gap-2"><span className="shrink-0">💡</span> Pelajari setiap pelajaran dengan seksama untuk hasil maksimal.</li>
+            <li className="flex items-start gap-2"><span className="shrink-0">🎯</span> Targetkan skor tinggi untuk mendapatkan bonus XP.</li>
+            <li className="flex items-start gap-2"><span className="shrink-0">🔥</span> Belajar konsisten setiap hari untuk pertahankan streak!</li>
+          </ul>
+        </div>
       </motion.div>
     </AppLayout>
   );

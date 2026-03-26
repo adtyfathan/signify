@@ -534,10 +534,6 @@ export default function PracticeIndex() {
                 </motion.button>
               )}
             </div>
-
-            <p className="text-center text-white/20 text-xs mt-3">
-              Confidence min: {CONFIDENCE_THRESHOLD}% · Maks {MAX_DISPLAY_LETTERS} huruf per sesi
-            </p>
           </div>
         </div>
       </motion.div>

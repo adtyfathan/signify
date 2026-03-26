@@ -522,13 +522,6 @@ export default function QuizLesson({ lesson }) {
                             />
                         )}
                     </motion.div>
-
-                    {/* Hint */}
-                    {currentQuiz?.hint && (
-                        <div className="bg-black/40 backdrop-blur-sm border border-white/5 rounded-full px-4 py-1.5">
-                            <p className="text-white/50 text-xs">💡 {currentQuiz.hint}</p>
-                        </div>
-                    )}
                 </div>
 
                 {/* ── OVERLAY: REC badge ── */}
@@ -644,11 +637,6 @@ export default function QuizLesson({ lesson }) {
                                 </motion.button>
                             )}
                         </div>
-
-                        {/* Min pass score info */}
-                        <p className="text-center text-white/25 text-xs mt-3">
-                            Skor minimal lulus: {lesson.min_pass_score}% · Confidence min: 60%
-                        </p>
                     </div>
                 </div>
 

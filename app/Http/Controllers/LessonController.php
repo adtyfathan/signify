@@ -68,7 +68,7 @@ class LessonController extends Controller
 
         // Include lesson images
         $lessonData['images'] = $lesson->images
-            ->map(fn ($image) => [
+            ->map(fn($image) => [
                 'id' => $image->id,
                 'image_path' => $image->image_path,
                 'caption' => $image->caption,
@@ -94,6 +94,40 @@ class LessonController extends Controller
                 ->toArray();
         }
 
+        // Previous lesson (same module, lower order_index)
+        $prevLesson = Lesson::where('module_id', $lesson->module_id)
+            ->where('order_index', '<', $lesson->order_index)
+            ->where('is_published', true)
+            ->orderBy('order_index', 'desc')
+            ->first();
+
+        // Next lesson (same module, higher order_index)
+        $nextLesson = Lesson::where('module_id', $lesson->module_id)
+            ->where('order_index', '>', $lesson->order_index)
+            ->where('is_published', true)
+            ->orderBy('order_index')
+            ->first();
+
+        $mapLesson = function ($l) {
+            if (!$l)
+                return null;
+
+            $l->load('images', 'sign');
+
+            $thumbnail =
+                $l->images->first()->image_path
+                ?? $l->sign?->thumbnail_path
+                ?? $l->sign?->guide_image_path
+                ?? null;
+
+            return [
+                'id' => $l->id,
+                'title' => $l->title,
+                'lesson_type' => $l->lesson_type,
+                'thumbnail' => $thumbnail,
+            ];
+        };
+
         return Inertia::render('Learn/Lesson', [
             'lesson' => $lessonData,
             'progress' => [
@@ -101,6 +135,8 @@ class LessonController extends Controller
                 'best_score' => $progress->best_score,
                 'attempts' => $progress->attempts,
             ],
+            'prev_lesson' => $mapLesson($prevLesson),
+            'next_lesson' => $mapLesson($nextLesson),
         ]);
     }
 

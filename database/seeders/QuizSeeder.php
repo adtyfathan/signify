@@ -32,6 +32,7 @@ class QuizSeeder extends Seeder
             'description' => 'Pelajari materi dasar mengenai bahasa isyarat',
             'type' => 'introduction',
             'order_index' => 1,
+            'thumbnail_path' => 'images/module1.webp',
             'xp_reward' => 50,
             'is_published' => true,
         ]);
@@ -77,6 +78,7 @@ class QuizSeeder extends Seeder
             'description' => 'Pelajari alfabet dalam Bahasa Isyarat Indonesia',
             'type' => 'alphabet',
             'order_index' => 2,
+            'thumbnail_path' => 'images/module2.webp',
             'xp_reward' => 100,
             'is_published' => true,
         ]);
@@ -171,6 +173,7 @@ class QuizSeeder extends Seeder
             'description' => 'Pelajari kosakata dasar dalam Bahasa Isyarat',
             'type' => 'vocabulary',
             'order_index' => 3,
+            'thumbnail_path' => 'images/module3.webp',
             'xp_reward' => 150,
             'is_published' => true,
         ]);
@@ -221,6 +224,7 @@ class QuizSeeder extends Seeder
             'description' => 'Pelajari "percakapan sehari-hari" dalam Bahasa Isyarat Indonesia',
             'type' => 'conversation',
             'order_index' => 4,
+            'thumbnail_path' => 'images/module4.webp',
             'xp_reward' => 150,
             'is_published' => true,
         ]);

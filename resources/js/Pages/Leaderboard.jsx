@@ -11,17 +11,49 @@ function getInitials(name = '') {
 }
 
 const PODIUM_CONFIG = {
-  1: { medal: '🥇', gradient: 'from-yellow-400 to-amber-500', ring: 'ring-yellow-400/50', bg: 'bg-yellow-400/10', text: 'text-yellow-400', height: 'h-24', order: 'order-2' },
-  2: { medal: '🥈', gradient: 'from-slate-300 to-slate-400', ring: 'ring-slate-400/50', bg: 'bg-slate-400/10', text: 'text-slate-400', height: 'h-16', order: 'order-1' },
-  3: { medal: '🥉', gradient: 'from-orange-400 to-amber-600', ring: 'ring-orange-400/50', bg: 'bg-orange-400/10', text: 'text-orange-400', height: 'h-12', order: 'order-3' },
+  1: {
+    medal: '🥇',
+    gradient: 'from-[#f8d95e] to-[#e6c244]',
+    ring: 'ring-[#f8d95e]/60',
+    bg: 'bg-[#f8d95e]/10',
+    text: 'text-[#a08400]',
+    height: 'h-24',
+    order: 'order-2',
+  },
+  2: {
+    medal: '🥈',
+    gradient: 'from-[#6fb89d] to-[#4e9e82]',
+    ring: 'ring-[#6fb89d]/50',
+    bg: 'bg-[#6fb89d]/10',
+    text: 'text-[#4e9e82]',
+    height: 'h-16',
+    order: 'order-1',
+  },
+  3: {
+    medal: '🥉',
+    gradient: 'from-[#f8f3e1] to-[#e8e0c8]',
+    ring: 'ring-[#f8f3e1]/50',
+    bg: 'bg-[#f8f3e1]/60 dark:bg-[#f8f3e1]/10',
+    text: 'text-[#7a6a3a] dark:text-[#c8b878]',
+    height: 'h-12',
+    order: 'order-3',
+  },
 };
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 
 function UserAvatar({ username, size = 'md', ring = '' }) {
-  const sizes = { sm: 'w-8 h-8 text-xs', md: 'w-10 h-10 text-sm', lg: 'w-14 h-14 text-base', xl: 'w-16 h-16 text-lg' };
+  const sizes = {
+    sm: 'w-8 h-8 text-xs',
+    md: 'w-10 h-10 text-sm',
+    lg: 'w-14 h-14 text-base',
+    xl: 'w-16 h-16 text-lg',
+  };
   return (
-    <div className={`${sizes[size]} rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center font-bold text-white shrink-0 ring-2 ${ring || 'ring-transparent'}`}>
+    <div
+      className={`${sizes[size]} rounded-full flex items-center justify-center font-bold text-[#fdfcf7] shrink-0 ring-2 ${ring || 'ring-transparent'}`}
+      style={{ background: 'linear-gradient(135deg, #6fb89d 0%, #4e9e82 100%)' }}
+    >
       {getInitials(username)}
     </div>
   );
@@ -41,7 +73,6 @@ function PodiumCard({ user, index }) {
       transition={{ delay: index * 0.1 + 0.2, duration: 0.5, ease: 'easeOut' }}
       className={`flex flex-col items-center ${cfg.order}`}
     >
-      {/* Crown for #1 */}
       {isFirst && (
         <motion.div
           initial={{ opacity: 0, y: -10, rotate: -15 }}
@@ -49,31 +80,27 @@ function PodiumCard({ user, index }) {
           transition={{ delay: 0.6, type: 'spring' }}
           className="mb-1"
         >
-          <Crown className="w-6 h-6 text-yellow-400 fill-yellow-400" />
+          <Crown className="w-6 h-6 text-[#f8d95e] fill-[#f8d95e]" />
         </motion.div>
       )}
 
-      {/* Avatar */}
       <div className={`relative mb-3 ${isFirst ? 'mt-0' : 'mt-7'}`}>
         <UserAvatar username={user.username} size={isFirst ? 'xl' : 'lg'} ring={cfg.ring} />
         <span className="absolute -bottom-1 -right-1 text-base">{cfg.medal}</span>
       </div>
 
-      {/* Name + level */}
-      <p className={`font-bold text-slate-900 dark:text-white text-center truncate max-w-[90px] ${isFirst ? 'text-base' : 'text-sm'}`}>
+      <p className={`font-bold text-slate-900 dark:text-[#fdfcf7] text-center truncate max-w-[90px] ${isFirst ? 'text-base' : 'text-sm'}`}>
         {user.username}
       </p>
-      <p className="text-xs text-slate-500 mb-2">Lv.{user.level ?? 1}</p>
+      <p className="text-xs text-slate-500 dark:text-[#6fb89d]/60 mb-2">Lv.{user.level ?? 1}</p>
 
-      {/* XP badge */}
       <div className={`flex items-center gap-1 ${cfg.bg} rounded-full px-3 py-1`}>
         <Zap className={`w-3.5 h-3.5 ${cfg.text}`} />
         <span className={`text-xs font-bold ${cfg.text}`}>{user.xp_earned?.toLocaleString()}</span>
       </div>
 
-      {/* Podium block */}
       <div className={`mt-3 w-20 ${cfg.height} rounded-t-xl bg-gradient-to-b ${cfg.gradient} opacity-80 flex items-start justify-center pt-1`}>
-        <span className="text-white font-black text-lg">#{user.rank}</span>
+        <span className="text-white font-black text-lg drop-shadow">#{user.rank}</span>
       </div>
     </motion.div>
   );
@@ -88,34 +115,34 @@ function RankRow({ user, isCurrentUser, index }) {
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.04 + 0.1, duration: 0.3 }}
       className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors
-                ${isCurrentUser
-          ? 'bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800'
-          : 'bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-slate-200 dark:hover:border-slate-700'
+        ${isCurrentUser
+          ? 'bg-[#6fb89d]/8 dark:bg-[#6fb89d]/10 border border-[#6fb89d]/30 dark:border-[#6fb89d]/25'
+          : 'bg-slate-50 dark:bg-slate-800/50 border border-transparent hover:border-[#6fb89d]/20 dark:hover:border-[#6fb89d]/15'
         }`}
     >
-      {/* Rank number */}
       <div className="w-8 text-center shrink-0">
-        <span className="text-sm font-bold text-slate-500 dark:text-slate-400">
+        <span className="text-sm font-bold text-slate-500 dark:text-[#6fb89d]/50">
           #{user.rank}
         </span>
       </div>
 
-      {/* Avatar */}
       <UserAvatar username={user.username} size="sm" />
 
-      {/* Name + level */}
       <div className="flex-1 min-w-0">
-        <p className={`font-semibold truncate text-sm ${isCurrentUser ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-900 dark:text-white'}`}>
+        <p className={`font-semibold truncate text-sm ${isCurrentUser ? 'text-[#4e9e82] dark:text-[#6fb89d]' : 'text-slate-900 dark:text-[#fdfcf7]'}`}>
           {user.username}
-          {isCurrentUser && <span className="ml-2 text-[10px] bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-1.5 py-0.5 rounded-full font-medium">Anda</span>}
+          {isCurrentUser && (
+            <span className="ml-2 text-[10px] bg-[#6fb89d]/15 dark:bg-[#6fb89d]/20 text-[#4e9e82] dark:text-[#6fb89d] px-1.5 py-0.5 rounded-full font-medium">
+              Anda
+            </span>
+          )}
         </p>
-        <p className="text-xs text-slate-400">Level {user.level ?? 1}</p>
+        <p className="text-xs text-slate-400 dark:text-[#6fb89d]/40">Level {user.level ?? 1}</p>
       </div>
 
-      {/* XP */}
       <div className="flex items-center gap-1 shrink-0">
-        <Zap className="w-3.5 h-3.5 text-yellow-500" />
-        <span className="font-bold text-sm text-slate-900 dark:text-white">
+        <Zap className="w-3.5 h-3.5 text-[#f8d95e]" />
+        <span className="font-bold text-sm text-slate-900 dark:text-[#fdfcf7]">
           {user.xp_earned?.toLocaleString()}
         </span>
       </div>
@@ -131,22 +158,25 @@ function YourRankBanner({ rank, xp }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.15 }}
-      className="flex items-center gap-4 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-200 dark:border-indigo-800 rounded-2xl px-5 py-4 mb-6"
+      className="flex items-center gap-4 rounded-2xl px-5 py-4 mb-6 border border-[#6fb89d]/25 dark:border-[#6fb89d]/20"
+      style={{
+        background: 'linear-gradient(to right, rgba(111,184,157,0.08), rgba(248,243,225,0.06))',
+      }}
     >
-      <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center shrink-0">
-        <Medal className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+      <div className="w-10 h-10 rounded-full bg-[#6fb89d]/15 dark:bg-[#6fb89d]/10 flex items-center justify-center shrink-0">
+        <Medal className="w-5 h-5 text-[#6fb89d]" />
       </div>
       <div className="flex-1">
-        <p className="text-xs text-slate-500 dark:text-slate-400 mb-0.5">Posisi kamu minggu ini</p>
-        <p className="font-bold text-slate-900 dark:text-white text-lg leading-tight">
+        <p className="text-xs text-slate-500 dark:text-[#6fb89d]/50 mb-0.5">Posisi kamu minggu ini</p>
+        <p className="font-bold text-slate-900 dark:text-[#fdfcf7] text-lg leading-tight">
           {rank ? `Peringkat #${rank}` : 'Belum masuk peringkat'}
         </p>
       </div>
       <div className="text-right shrink-0">
-        <p className="text-xs text-slate-400 mb-0.5">XP minggu ini</p>
+        <p className="text-xs text-slate-400 dark:text-[#6fb89d]/40 mb-0.5">XP minggu ini</p>
         <div className="flex items-center gap-1 justify-end">
-          <Zap className="w-4 h-4 text-yellow-500" />
-          <span className="font-bold text-slate-900 dark:text-white">{xp?.toLocaleString() ?? 0}</span>
+          <Zap className="w-4 h-4 text-[#f8d95e]" />
+          <span className="font-bold text-slate-900 dark:text-[#fdfcf7]">{xp?.toLocaleString() ?? 0}</span>
         </div>
       </div>
     </motion.div>
@@ -174,12 +204,12 @@ export default function Leaderboard() {
         className="mb-6"
       >
         <div className="flex items-center gap-3 mb-1">
-          <Trophy className="w-7 h-7 text-yellow-500 fill-yellow-500/20" />
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white">
+          <Trophy className="w-7 h-7 text-[#f8d95e] fill-[#f8d95e]/20" />
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-[#fdfcf7]">
             Papan Peringkat
           </h1>
         </div>
-        <p className="text-slate-500 dark:text-slate-400 text-sm ml-10">
+        <p className="text-slate-500 dark:text-[#6fb89d]/60 text-sm ml-10">
           Peringkat diperbarui setiap minggu berdasarkan XP yang diperoleh.
         </p>
       </motion.div>
@@ -188,7 +218,7 @@ export default function Leaderboard() {
       <YourRankBanner rank={userRank} xp={userXp} />
 
       {/* ── Tab switcher ── */}
-      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800 rounded-xl p-1 mb-6 w-fit">
+      <div className="flex gap-1 bg-slate-100 dark:bg-slate-800/70 rounded-xl p-1 mb-6 w-fit">
         {[
           { key: 'weekly', label: 'Minggu Ini' },
           { key: 'allTime', label: 'Sepanjang Waktu' },
@@ -197,9 +227,9 @@ export default function Leaderboard() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                            ${activeTab === tab.key
-                ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
-                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+              ${activeTab === tab.key
+                ? 'bg-white dark:bg-[#6fb89d]/15 text-[#4e9e82] dark:text-[#6fb89d] shadow-sm border border-[#6fb89d]/20 dark:border-[#6fb89d]/20'
+                : 'text-slate-500 dark:text-slate-400 hover:text-[#4e9e82] dark:hover:text-[#6fb89d]'
               }`}
           >
             {tab.label}
@@ -216,8 +246,7 @@ export default function Leaderboard() {
           transition={{ duration: 0.2 }}
         >
           {topUsers.length === 0 ? (
-            /* Empty state */
-            <div className="text-center py-16 text-slate-400">
+            <div className="text-center py-16 text-slate-400 dark:text-[#6fb89d]/30">
               <Trophy className="w-12 h-12 mx-auto mb-3 opacity-20" />
               <p className="font-medium">Belum ada data peringkat.</p>
               <p className="text-sm mt-1">Mulai kuis untuk masuk papan peringkat!</p>
@@ -227,11 +256,10 @@ export default function Leaderboard() {
               {/* ── Podium Top 3 ── */}
               {top3.length > 0 && (
                 <div className="mb-8">
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">
+                    <p className="text-xs font-semibold text-slate-400 dark:text-[#fdfcf7]/80 uppercase tracking-wider mb-4">
                     🏆 Top 3
                   </p>
                   <div className="flex items-end justify-center gap-3 md:gap-6">
-                    {/* Render order: 2nd, 1st, 3rd */}
                     {[
                       top3.find(u => u.rank === 2),
                       top3.find(u => u.rank === 1),
@@ -246,7 +274,7 @@ export default function Leaderboard() {
               {/* ── Ranks 4–10 ── */}
               {rest.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                  <p className="text-xs font-semibold text-slate-400 dark:text-[#6fb89d]/50 uppercase tracking-wider mb-3">
                     Peringkat Lainnya
                   </p>
                   <div className="space-y-2">
@@ -279,9 +307,12 @@ export default function Leaderboard() {
           { icon: '🎯', text: 'Kuis lebih sulit memberikan XP lebih besar.' },
           { icon: '🏅', text: 'Raih badge untuk mendapatkan bonus XP tambahan.' },
         ].map((tip, i) => (
-          <div key={i} className="flex items-start gap-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl p-3">
+          <div
+            key={i}
+            className="flex items-start gap-3 bg-[#f8f3e1]/60 dark:bg-slate-800/50 border border-[#6fb89d]/15 dark:border-[#6fb89d]/10 rounded-xl p-3"
+          >
             <span className="text-lg shrink-0">{tip.icon}</span>
-            <p className="text-slate-600 dark:text-slate-400 text-sm">{tip.text}</p>
+            <p className="text-slate-600 dark:text-[#fdfcf7]/60 text-sm">{tip.text}</p>
           </div>
         ))}
       </motion.div>

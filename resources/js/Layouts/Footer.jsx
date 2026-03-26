@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { Heart } from 'lucide-react';
 
 const sections = [
   {
@@ -28,12 +27,12 @@ const sections = [
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 overflow-hidden">
+    <footer className="relative border-t border-[#6fb89d]/20 dark:border-[#6fb89d]/15 bg-[#fdfcf7] dark:bg-slate-950 overflow-hidden">
 
       {/* Subtle glow accents */}
       <div className="absolute inset-0 pointer-events-none select-none">
-        <div className="absolute bottom-0 left-0 w-72 h-40 bg-blue-500/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
-        <div className="absolute bottom-0 right-0 w-72 h-40 bg-indigo-500/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-72 h-40 bg-[#6fb89d]/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-72 h-40 bg-[#f8d95e]/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-6">
@@ -44,7 +43,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/dashboard" className="inline-block mb-3">
-              <span className="text-xl font-bold bg-gradient-to-r from-blue-500 to-indigo-600 bg-clip-text text-transparent">
+              <span className="text-xl font-bold text-[#6fb89d]">
                 Signify
               </span>
             </Link>
@@ -56,7 +55,7 @@ export default function Footer() {
           {/* Link sections */}
           {sections.map((section) => (
             <div key={section.title}>
-              <h4 className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
+              <h4 className="text-[10px] font-semibold text-[#6fb89d] uppercase tracking-widest mb-3">
                 {section.title}
               </h4>
               <ul className="space-y-2.5">
@@ -64,7 +63,7 @@ export default function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-150"
+                      className="text-sm text-slate-500 dark:text-slate-400 hover:text-[#6fb89d] dark:hover:text-[#6fb89d] transition-colors duration-150"
                     >
                       {link.label}
                     </Link>
@@ -75,8 +74,8 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* ── Divider — gradient fade ── */}
-        <div className="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent mb-5" />
+        {/* ── Divider ── */}
+        <div className="h-px bg-gradient-to-r from-transparent via-[#6fb89d]/25 dark:via-[#6fb89d]/20 to-transparent mb-5" />
 
         {/* ── Bottom bar ── */}
         <div className="flex flex-col sm:flex-row items-center justify-end gap-2">

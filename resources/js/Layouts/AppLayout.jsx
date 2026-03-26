@@ -1,19 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Link, usePage } from '@inertiajs/react';
+import React, { useState } from 'react';
+import { usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { 
-  Menu, X, Bell, LogOut, Settings, User, Home, BookOpen, 
-  Trophy, Zap, Users, BarChart3 
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
@@ -32,12 +19,12 @@ export default function AppLayout({ children }) {
 
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+        <div
+          className="fixed inset-0 bg-black/40 z-30 lg:hidden backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
-      
+
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
@@ -45,16 +32,16 @@ export default function AppLayout({ children }) {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col w-full">
+      <div className="flex-1 flex flex-col w-full min-w-0">
         {/* Navbar - Sticky */}
-        <div className="sticky top-0 z-20 bg-white dark:bg-slate-900">
-          <Navbar 
+        <div className="sticky top-0 z-20">
+          <Navbar
             onMenuClick={() => setSidebarOpen(!sidebarOpen)}
             user={auth}
           />
         </div>
 
-        {/* Page Content - Scrollable */}
+        {/* Page Content */}
         <main className="flex-1 w-full">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -66,8 +53,8 @@ export default function AppLayout({ children }) {
           </motion.div>
         </main>
 
-        {/* Footer - Relative at bottom */}
-        <footer className="w-full mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950">
+        {/* Footer */}
+        <footer className="w-full mt-auto">
           <Footer />
         </footer>
       </div>

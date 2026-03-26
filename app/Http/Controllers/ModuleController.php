@@ -61,6 +61,11 @@ class ModuleController extends Controller
                 $progress = $lesson->userProgress()->where('user_id', $user->id)->first();
                 $isUnlocked = $progressService->isLessonUnlocked($user, $lesson);
 
+                // Ambil gambar pertama berdasarkan order_index
+                $firstImage = $lesson->images()
+                    ->orderBy('order_index')
+                    ->first();
+
                 return [
                     'id' => $lesson->id,
                     'title' => $lesson->title,
@@ -70,6 +75,7 @@ class ModuleController extends Controller
                     'status' => $progress?->status ?? 'locked',
                     'best_score' => $progress?->best_score,
                     'is_unlocked' => $isUnlocked,
+                    'first_image' => $firstImage ? $firstImage->image_path : null,
                 ];
             });
 
@@ -78,6 +84,7 @@ class ModuleController extends Controller
                 'id' => $module->id,
                 'name' => $module->name,
                 'description' => $module->description,
+                'thumbnail_path' => $module->thumbnail_path,
                 'level' => $module->level,
             ],
             'lessons' => $lessons,

@@ -23,7 +23,8 @@ function Field({ label, error, children }) {
   );
 }
 
-const inputClass = "w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition";
+const inputClass =
+  "w-full px-3 py-2.5 rounded-xl border border-[#6fb89d]/30 dark:border-slate-700 bg-white dark:bg-slate-800/60 text-slate-900 dark:text-white text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#6fb89d] focus:border-transparent transition";
 
 export default function Login({ status }) {
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -50,7 +51,7 @@ export default function Login({ status }) {
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl text-xs text-green-700 dark:text-green-400"
+            className="p-3 bg-[#6fb89d]/10 border border-[#6fb89d]/30 rounded-xl text-xs text-[#6fb89d] dark:text-[#6fb89d]"
           >
             {status}
           </motion.div>
@@ -81,7 +82,7 @@ export default function Login({ status }) {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={processing}
-          className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm mt-2"
+          className="w-full flex items-center justify-center gap-2 bg-[#6fb89d] hover:bg-[#5da889] disabled:opacity-60 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm mt-2 shadow-sm shadow-[#6fb89d]/30"
         >
           {processing
             ? <><Loader className="w-4 h-4 animate-spin" /> Masuk...</>
